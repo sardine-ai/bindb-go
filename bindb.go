@@ -2,6 +2,7 @@ package bindb
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"os"
@@ -9,8 +10,7 @@ import (
 	"strings"
 )
 
-type BINDBrecord struct {
-	BIN     string
+type BINDBRecord struct {
 	Brand   string
 	Bank    string
 	Type    string
@@ -25,13 +25,13 @@ type BINDBrecord struct {
 }
 
 type DB struct {
-	Map map[string]*BINDBrecord
+	Map map[string]*BINDBRecord
 }
 
 func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 	var f *os.File
 	var db = &DB{}
-	db.Map = make(map[string]*BINDBrecord)
+	db.Map = make(map[string]*BINDBRecord)
 	var err error
 	f, err = os.Open(dbpath)
 	if err != nil {
@@ -52,8 +52,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 			fmt.Printf("BINDB row is not valid: %s\n", line)
 			continue
 		}
-		db.Map[fields[0]] = &BINDBrecord{
-			BIN:     fields[0],
+		db.Map[fields[0]] = &BINDBRecord{
 			Brand:   strings.ToUpper(fields[1]),
 			Bank:    strings.ToUpper(fields[2]),
 			Type:    strings.ToUpper(fields[3]),
@@ -71,13 +70,16 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 	return db, err
 }
 
-func FixLine(line string) string {
-	line = strings.Replace(line, "EG\twww.banqueducaire.com\t16990\t\\", "EG\twww.banqueducaire.com\t16990\t\t\t", 1)
-	return line
+func Find(db *DB, bin string) (bindbRecord *BINDBRecord, err error) {
+	var ok bool
+	if bindbRecord, ok = db.Map[bin]; ok {
+		return db.Map[bin], nil
+	} else {
+		return nil, errors.New(fmt.Sprintf("Couldn't find this BIN number %s in the BINDB", bin))
+	}
 }
 
-func Printrecord(x BINDBrecord) {
-	fmt.Printf("BIN: %s\n", x.BIN)
+func Printrecord(x BINDBRecord) {
 	fmt.Printf("Brand: %s\n", x.Brand)
 	fmt.Printf("Bank: %s\n", x.Bank)
 	fmt.Printf("Type: %s\n", x.Type)
