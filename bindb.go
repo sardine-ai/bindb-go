@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type BINDBRecord struct {
+type Record struct {
 	Brand   string
 	Bank    string
 	Type    string
@@ -25,13 +25,13 @@ type BINDBRecord struct {
 }
 
 type DB struct {
-	Map map[string]*BINDBRecord
+	Map map[string]*Record
 }
 
 func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 	var f *os.File
 	var db = &DB{}
-	db.Map = make(map[string]*BINDBRecord)
+	db.Map = make(map[string]*Record)
 	var err error
 	f, err = os.Open(dbpath)
 	if err != nil {
@@ -52,7 +52,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 			fmt.Printf("BINDB row is not valid: %s\n", line)
 			continue
 		}
-		db.Map[fields[0]] = &BINDBRecord{
+		db.Map[fields[0]] = &Record{
 			Brand:   strings.ToUpper(fields[1]),
 			Bank:    strings.ToUpper(fields[2]),
 			Type:    strings.ToUpper(fields[3]),
@@ -70,7 +70,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 	return db, err
 }
 
-func Find(db *DB, bin string) (bindbRecord *BINDBRecord, err error) {
+func Find(db *DB, bin string) (bindbRecord *Record, err error) {
 	var ok bool
 	if bindbRecord, ok = db.Map[bin]; ok {
 		return db.Map[bin], nil
@@ -79,7 +79,7 @@ func Find(db *DB, bin string) (bindbRecord *BINDBRecord, err error) {
 	}
 }
 
-func Printrecord(x BINDBRecord) {
+func Printrecord(x Record) {
 	fmt.Printf("Brand: %s\n", x.Brand)
 	fmt.Printf("Bank: %s\n", x.Bank)
 	fmt.Printf("Type: %s\n", x.Type)
