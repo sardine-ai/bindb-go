@@ -53,8 +53,7 @@ func getJson(url string, target interface{}) error {
 func ListDB(apiKey string) (dbInfo *DBInfo, err error) {
 	listUrl := "https://pci.bindb.com/api/download/" + apiKey + "/list"
 	dbInfo = &DBInfo{}
-
-	//fmt.Println(listUrl)
+	fmt.Println(listUrl)
 	//var dbInfoByte []byte
 	//var response *http.Response
 	//if response, err = http.Get(listUrl); err != nil {
