@@ -2,12 +2,15 @@ package bindb
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/iancoleman/strcase"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Record struct {
@@ -25,7 +28,44 @@ type Record struct {
 }
 
 type DB struct {
-	Map map[string]*Record
+	Map      map[string]*Record
+	Unloaded []string
+	Info     DBInfo
+}
+
+type DBInfo struct {
+	name string
+	time string
+	md5  string
+}
+
+func getJson(url string, target interface{}) error {
+	var myClient = &http.Client{Timeout: 10 * time.Second}
+	r, err := myClient.Get(url)
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	return json.NewDecoder(r.Body).Decode(target)
+}
+
+func ListDB(apiKey string) (dbInfo *DBInfo, err error) {
+	listUrl := "https://pci.bindb.com/api/download/" + apiKey + "/list"
+	dbInfo = &DBInfo{}
+
+	//fmt.Println(listUrl)
+	//var dbInfoByte []byte
+	//var response *http.Response
+	//if response, err = http.Get(listUrl); err != nil {
+	// return nil, err
+	//}
+	//if dbInfoByte, err = ioutil.ReadAll(response.Body); err != nil {
+	//    return nil, err
+	//}
+	//err = json.Unmarshal(dbInfoByte, dbInfo)
+	err = getJson(listUrl, &dbInfo)
+	return dbInfo, err
 }
 
 func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
@@ -49,7 +89,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 		fields = strings.Split(line, "\t")
 		_, err = strconv.ParseInt(fields[0], 10, 32)
 		if err != nil || len(fields) < 12 {
-			fmt.Printf("BINDB row is not valid: %s\n", line)
+			db.Unloaded = append(db.Unloaded, line)
 			continue
 		}
 		db.Map[fields[0]] = &Record{
