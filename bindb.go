@@ -67,7 +67,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 		}
 	}
 	_ = f.Close()
-	return db, err
+	return db, nil
 }
 
 func Find(db *DB, bin string) (bindbRecord *Record, err error) {
