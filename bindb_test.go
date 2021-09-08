@@ -7,7 +7,12 @@ import (
 )
 
 func TestBINDB(t *testing.T) {
-	db, error := LoadDB("./fixtures/test_data.txt", nil)
+	db, error := LoadDB("./fixtures/", nil)
+	assert.Equal(t, nil, error)
+	bindbRecord, error := Find(db, "238006")
+	assert.Equal(t, nil, error)
+	assert.Equal(t, bindbRecord.Brand, "MASTERCARD")
+	assert.Equal(t, bindbRecord.Level, "")
 	assert.Equal(t, nil, error)
 	bindbRecord, err := Find(db, "477938")
 	assert.Equal(t, nil, err)

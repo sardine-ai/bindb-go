@@ -2,4 +2,3 @@ bin	brand	bank	type	level	info	country	www	phone	address	city	zip
 477938	VISA		DEBIT	PREPAID		KW					
 500797	MAESTRO		DEBIT	STANDARD		MY					
 4444	VISA	WRONGLINE
-WRONGBIN
