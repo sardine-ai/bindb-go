@@ -96,42 +96,43 @@ func LoadMulti(db *DB, path string, autofix func(string) string) (err error) {
 			fmt.Printf("BINDB row is not valid: %s, fields number is %d\n", line, len(fields))
 			continue
 		}
+		newRecord := BuildRecord(fields)
 		if item, exist := db.Map[fields[0]]; exist {
-			if item.Brand != strings.ToUpper(fields[1]) {
+			if item.Brand != newRecord.Brand {
 				item.Brand = ""
 			}
-			if item.Bank != strings.ToUpper(fields[2]) {
+			if item.Bank != newRecord.Bank {
 				item.Bank = ""
 			}
-			if item.Type != strings.ToUpper(fields[3]) {
+			if item.Type != newRecord.Type {
 				item.Type = ""
 			}
-			if item.Level != strings.ToUpper(fields[4]) {
+			if item.Level != newRecord.Level {
 				item.Level = ""
 			}
-			if item.Info != fields[5] {
+			if item.Info != newRecord.Info {
 				item.Info = ""
 			}
-			if item.Country != strings.ToUpper(fields[6]) {
+			if item.Country != newRecord.Country {
 				item.Country = ""
 			}
-			if item.WWW != fields[7] {
+			if item.WWW != newRecord.WWW {
 				item.WWW = ""
 			}
-			if item.Phone != fields[8] {
+			if item.Phone != newRecord.Phone {
 				item.Phone = ""
 			}
-			if item.Address != fields[9] {
+			if item.Address != newRecord.Address {
 				item.Address = ""
 			}
-			if item.City != strcase.ToCamel(fields[10]) {
+			if item.City != newRecord.City {
 				item.City = ""
 			}
-			if item.Zip != fields[11] {
+			if item.Zip != newRecord.Zip {
 				item.Zip = ""
 			}
 		} else {
-			db.Map[fields[0]] = BuildRecord(fields)
+			db.Map[fields[0]] = newRecord
 		}
 	}
 	_ = f.Close()
