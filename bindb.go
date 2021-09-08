@@ -69,19 +69,7 @@ func LoadMain(db *DB, dbpath string, autofix func(string) string) error {
 			fmt.Printf("BINDB row is not valid: %s\n", line)
 			continue
 		}
-		db.Map[fields[0]] = &Record{
-			Brand:   strings.ToUpper(fields[1]),
-			Bank:    strings.ToUpper(fields[2]),
-			Type:    strings.ToUpper(fields[3]),
-			Level:   strings.ToUpper(fields[4]),
-			Info:    fields[5],
-			Country: strings.ToUpper(fields[6]),
-			WWW:     fields[7],
-			Phone:   fields[8],
-			Address: fields[9],
-			City:    strcase.ToCamel(fields[10]),
-			Zip:     fields[11],
-		}
+		db.Map[fields[0]] = BuildRecord(fields)
 	}
 	_ = f.Close()
 	return nil
@@ -143,19 +131,7 @@ func LoadMulti(db *DB, path string, autofix func(string) string) (err error) {
 				item.Zip = ""
 			}
 		} else {
-			db.Map[fields[0]] = &Record{
-				Brand:   strings.ToUpper(fields[1]),
-				Bank:    strings.ToUpper(fields[2]),
-				Type:    strings.ToUpper(fields[3]),
-				Level:   strings.ToUpper(fields[4]),
-				Info:    fields[5],
-				Country: strings.ToUpper(fields[6]),
-				WWW:     fields[7],
-				Phone:   fields[8],
-				Address: fields[9],
-				City:    strcase.ToCamel(fields[10]),
-				Zip:     fields[11],
-			}
+			db.Map[fields[0]] = BuildRecord(fields)
 		}
 	}
 	_ = f.Close()
@@ -183,4 +159,20 @@ func Printrecord(x Record) {
 	fmt.Printf("Address: %s\n", x.Address)
 	fmt.Printf("City: %s\n", x.City)
 	fmt.Printf("Zip: %s\n", x.Zip)
+}
+
+func BuildRecord(fields []string) *Record {
+	return &Record{
+		Brand:   strings.ToUpper(fields[1]),
+		Bank:    strings.ToUpper(fields[2]),
+		Type:    strings.ToUpper(fields[3]),
+		Level:   strings.ToUpper(fields[4]),
+		Info:    fields[5],
+		Country: strings.ToUpper(fields[6]),
+		WWW:     fields[7],
+		Phone:   fields[8],
+		Address: fields[9],
+		City:    strcase.ToCamel(fields[10]),
+		Zip:     fields[11],
+	}
 }
