@@ -28,13 +28,15 @@ type DB struct {
 	Map map[string]*Record
 }
 
-func InitBindb(path string, autofix func(string) string) (*DB, error) {
+func LoadDB(path string, autofix func(string) string) (*DB, error) {
 	var err error
 
 	if path[len(path)-1] != '/' {
 		path = path + "/"
 	}
-	db, err := LoadDB(path+"main.txt", autofix)
+	var db = &DB{}
+	db.Map = make(map[string]*Record)
+	err = LoadMain(db, path+"main.txt", autofix)
 	if err != nil {
 		return nil, err
 	}
@@ -45,14 +47,12 @@ func InitBindb(path string, autofix func(string) string) (*DB, error) {
 	return db, err
 }
 
-func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
+func LoadMain(db *DB, dbpath string, autofix func(string) string) error {
 	var f *os.File
-	var db = &DB{}
-	db.Map = make(map[string]*Record)
 	var err error
 	f, err = os.Open(dbpath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
@@ -84,7 +84,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 		}
 	}
 	_ = f.Close()
-	return db, nil
+	return nil
 }
 
 func LoadMulti(db *DB, path string, autofix func(string) string) (err error) {

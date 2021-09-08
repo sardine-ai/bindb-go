@@ -7,7 +7,7 @@ import (
 )
 
 func TestBINDB(t *testing.T) {
-	db, error := InitBindb("./fixtures/", nil)
+	db, error := LoadDB("./fixtures/", nil)
 	assert.Equal(t, nil, error)
 	bindbRecord, error := Find(db, "238006")
 	assert.Equal(t, nil, error)
