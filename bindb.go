@@ -84,7 +84,7 @@ func LoadDB(dbpath string, autofix func(string) string) (*DB, error) {
 		}
 	}
 	_ = f.Close()
-	return db, err
+	return db, nil
 }
 
 func LoadMulti(db *DB, path string, autofix func(string) string) (err error) {
