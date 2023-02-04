@@ -66,6 +66,10 @@ func LoadMain(db *DB, dbpath string, autofix func(string) string) error {
 		fields = strings.Split(line, "\t")
 		_, err = strconv.ParseInt(fields[0], 10, 32)
 		if err != nil || len(fields) < 12 {
+			if line == "bin	brand	bank	type	level	info	country	www	phone	address	city	zip" {
+				// Skip expected first line
+				continue
+			}
 			fmt.Printf("BINDB row is not valid: %s\n", line)
 			continue
 		}
@@ -93,6 +97,10 @@ func LoadMulti(db *DB, path string, autofix func(string) string) (err error) {
 		fields = strings.Split(line, "\t")
 		_, err = strconv.ParseInt(fields[0], 10, 32)
 		if err != nil || len(fields) < 12 {
+			if line == "bin	brand	bank	type	level	info	country	www	phone	address	city	zip" {
+				// Skip expected first line
+				continue
+			}
 			fmt.Printf("BINDB row is not valid: %s, fields number is %d\n", line, len(fields))
 			continue
 		}
