@@ -70,7 +70,7 @@ func LoadMain(db *DB, dbpath string, autofix func(string) string) error {
 				// Skip expected first line
 				continue
 			}
-			fmt.Printf("BINDB row is not valid: %s\n", line)
+			fmt.Printf("BINDB row is not valid: %s, fields number is %d\n", line, len(fields))
 			continue
 		}
 		db.Map[fields[0]] = BuildRecord(fields)
